@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/HMDI/static/css/main.d87cbb72.chunk.css",
-    "main.js": "/HMDI/static/js/main.890530e4.chunk.js",
-    "main.js.map": "/HMDI/static/js/main.890530e4.chunk.js.map",
+    "main.js": "/HMDI/static/js/main.955c6f4c.chunk.js",
+    "main.js.map": "/HMDI/static/js/main.955c6f4c.chunk.js.map",
     "runtime-main.js": "/HMDI/static/js/runtime-main.e670759e.js",
     "runtime-main.js.map": "/HMDI/static/js/runtime-main.e670759e.js.map",
     "static/css/2.c0f1c5ca.chunk.css": "/HMDI/static/css/2.c0f1c5ca.chunk.css",
@@ -22,6 +22,6 @@
     "static/css/2.c0f1c5ca.chunk.css",
     "static/js/2.a84c2bb1.chunk.js",
     "static/css/main.d87cbb72.chunk.css",
-    "static/js/main.890530e4.chunk.js"
+    "static/js/main.955c6f4c.chunk.js"
   ]
 }
