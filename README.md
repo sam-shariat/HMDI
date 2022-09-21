@@ -11,7 +11,9 @@ Contracts : https://github.com/sam-shariat/HMDI/tree/main/src/contracts
 
 
 create-react-app : https://www.npmjs.com/package/create-react-app
+
 algosdk : https://www.npmjs.com/package/algosdk
+
 randlabs/myalgo-connect : https://www.npmjs.com/package/@randlabs/myalgo-connect
 
 ## Possible RoadMap
