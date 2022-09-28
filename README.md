@@ -19,3 +19,7 @@ randlabs/myalgo-connect : https://www.npmjs.com/package/@randlabs/myalgo-connect
 ## Possible RoadMap
 
 A Decentralized version of GoFundMe 
+# New Update will be deployed on 1st of October 2022 
+- Upload Directly to ipfs through pinata API
+- Likes and Comments
+- Top and Last Donations
