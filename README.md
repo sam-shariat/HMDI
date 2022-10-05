@@ -7,6 +7,12 @@
 <br/>
 ### Live Demo : [https://github.com/sam-shariat/HMDI/](https://github.com/sam-shariat/HMDI/)
 
+- This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
+<br/>
+- Algorand Official SDK : [algosdk](https://www.npmjs.com/package/algosdk)
+<br/>
+- My Algo Wallet SDK : [myalgo-connect](https://www.npmjs.com/package/@randlabs/myalgo-connect)
+
 ## :point_down: Features
 
 ### working
