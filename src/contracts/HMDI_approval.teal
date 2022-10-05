@@ -8,7 +8,7 @@ int DeleteApplication
 ==
 bnz main_l7
 txna ApplicationArgs 0
-byte "buy"
+byte "donate"
 ==
 bnz main_l4
 err
@@ -24,7 +24,7 @@ global CreatorAddress
 ==
 &&
 gtxn 1 Amount
-byte "PRICE"
+byte "DONATION"
 app_global_get
 txna ApplicationArgs 1
 btoi
@@ -40,11 +40,17 @@ bnz main_l6
 int 0
 return
 main_l6:
-byte "SOLD"
-byte "SOLD"
+byte "DONATED"
+byte "DONATED"
 app_global_get
 txna ApplicationArgs 1
 btoi
++
+app_global_put
+byte "UWALLETS"
+byte "UWALLETS"
+app_global_get
+int 1
 +
 app_global_put
 int 1
@@ -60,7 +66,7 @@ int 6
 ==
 assert
 txn Note
-byte "mj-marketplace:uv01"
+byte "HMDI:uv001"
 ==
 assert
 txna ApplicationArgs 4
@@ -85,15 +91,18 @@ app_global_put
 byte "LINK"
 txna ApplicationArgs 3
 app_global_put
-byte "PRICE"
+byte "DONATION"
 txna ApplicationArgs 4
 btoi
 app_global_put
-byte "NEEDEDPRICE"
+byte "GOALDONATION"
 txna ApplicationArgs 5
 btoi
 app_global_put
-byte "SOLD"
+byte "DONATED"
+int 0
+app_global_put
+byte "UWALLETS"
 int 0
 app_global_put
 int 1

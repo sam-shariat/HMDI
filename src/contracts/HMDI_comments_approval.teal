@@ -1,0 +1,24 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l2
+err
+main_l2:
+txn NumAppArgs
+int 2
+==
+assert
+txn Note
+byte "HMDI-comments:uv001"
+==
+assert
+byte "UID"
+txna ApplicationArgs 0
+btoi
+app_global_put
+byte "COMMENT"
+txna ApplicationArgs 1
+app_global_put
+int 1
+return

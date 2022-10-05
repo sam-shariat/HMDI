@@ -1,31 +1,64 @@
-import React, {useCallback, useState} from "react";
+import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import {Button, FloatingLabel, Form, Modal} from "react-bootstrap";
-import {stringToMicroAlgos} from "../../utils/conversions";
+import { Button, FloatingLabel, Form, Image, Modal } from "react-bootstrap";
+import { stringToMicroAlgos } from "../../utils/conversions";
+import axios from 'axios';
 
-const AddProduct = ({createProduct}) => {
+const AddProduct = ({ createProduct }) => {
     const [name, setName] = useState("");
     const [image, setImage] = useState("");
     const [description, setDescription] = useState("");
     const [link, setLink] = useState("");
-    const [price, setPrice] = useState(0);
-    const [neededprice, setNeededPrice] = useState(0);
+    const [donation, setDonation] = useState(0);
+    const [fileImg, setFileImg] = useState(null);
+    const [goaldonation, setGoaldonation] = useState(0);
+
+    const sendproFileToIPFS = async (e) => {
+        if (fileImg) {
+            try {
+
+                const formData = new FormData();
+                formData.append("file", fileImg);
+                console.log('uploading file to ipfs')
+                const resFile = await axios({
+                    method: "post",
+                    url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+                    data: formData,
+                    headers: {
+                        'Authorization': `Bearer ${process.env.REACT_APP_PINATA_JWT}`,
+                        'pinata_api_key': `${process.env.REACT_APP_PINATA_API_KEY}`,
+                        'pinata_secret_api_key': `${process.env.REACT_APP_PINATA_API_SECRET}`,
+                        "Content-Type": "multipart/form-data"
+                    },
+                });
+
+                const ImgHash = `https://gateway.pinata.cloud/ipfs/${resFile.data.IpfsHash}`;
+                console.log(ImgHash);
+                setImage(ImgHash);
+                //Take a look at your Pinata Pinned section, you will see a new file added to you list.   
+
+            } catch (error) {
+                console.log("Error sending File to IPFS: ")
+                console.log(error)
+            }
+        }
+    }
 
     const isFormFilled = useCallback(() => {
-        if(name.length > 162 || name.length < 1 ){ return false }
+        if (name.length > 162 || name.length < 1) { return false }
         console.log(name)
-        if(image.length > 162 || image.length < 1 ){ return false }
+        if (image.length > 162 || image.length < 1) { return false }
         console.log(image)
-        if(description.length > 162 || description.length < 1 ){ return false }
+        if (description.length > 162 || description.length < 1) { return false }
         console.log(description)
-        if(link.length > 162 || link.length < 1 ){ return false }
+        if (link.length > 162 || link.length < 1) { return false }
         console.log(link)
-        if((Number(price)/1000000) >= 100 || (Number(price)/1000000) < 1 ){ return false }
-        if((Number(neededprice)/1000000) >= 10000 || (Number(neededprice)/1000000) < 1 ){ return false }
-        if(Number(neededprice) < 0 || Number(price) < 0 ){ return false }
-        console.log(neededprice)
+        if ((Number(donation) / 1000000) >= 100 || (Number(donation) / 1000000) < 1) { return false }
+        if ((Number(goaldonation) / 1000000) >= 10000 || (Number(goaldonation) / 1000000) < 1) { return false }
+        if (Number(goaldonation) < 0 || Number(donation) < 0) { return false }
+        console.log(goaldonation)
         return true;
-    }, [name, image, description, link, price, neededprice]);
+    }, [name, image, description, link, donation, goaldonation]);
 
     const [show, setShow] = useState(false);
 
@@ -37,7 +70,7 @@ const AddProduct = ({createProduct}) => {
                 onClick={handleShow}
                 variant="dark"
                 className="rounded-pill px-0"
-                style={{width: "138px"}}
+                style={{ width: "138px" }}
             >
                 <i className="bi bi-plus"></i>
                 Add Project
@@ -62,23 +95,20 @@ const AddProduct = ({createProduct}) => {
                                 placeholder="Enter name of project"
                             />
                         </FloatingLabel>
-                        <FloatingLabel
-                            controlId="inputUrl"
-                            label="Image URL Of Your Project"
-                            className="mb-3"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="Image URL https://example.com/image.jpg"
-                                value={image}
-                                onChange={(e) => {
-                                    setImage(e.target.value);
-                                }}
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Select Image</Form.Label>
+                        <div className="d-flex gap-2 mb-3">
+                            <Form.Control type="file" onChange={(e) => setFileImg(e.target.files[0])} accept="image/x-png,image/gif,image/jpeg" />
+                            <Button variant="primary" onClick={sendproFileToIPFS}>
+                                Upload
+                            </Button>
+                        </div>
+                        {image !== "" &&
+                        <div className="mb-3">
+                            <Image src={image} rounded className="w-100" />
+                        </div>}
                         <FloatingLabel
                             controlId="inputDescription"
-                            label="Description ( Max 162 Chars )"
+                            label={`Description ( ${description.length}/112 Chars )`}
                             className="mb-3"
                         >
                             <Form.Control
@@ -93,7 +123,7 @@ const AddProduct = ({createProduct}) => {
                         </FloatingLabel>
                         <FloatingLabel
                             controlId="inputLinkUrl"
-                            label="Link To Proposal"
+                            label="Link To Proposal or Website"
                             className="mb-3"
                         >
                             <Form.Control
@@ -106,7 +136,7 @@ const AddProduct = ({createProduct}) => {
                             />
                         </FloatingLabel>
                         <FloatingLabel
-                            controlId="inputPrice"
+                            controlId="inputDonation"
                             label="Each Donation (Max 99)"
                             className="mb-3"
                         >
@@ -115,12 +145,12 @@ const AddProduct = ({createProduct}) => {
                                 max={10}
                                 placeholder="Each Donation in ALGO (Max 99)"
                                 onChange={(e) => {
-                                    setPrice(stringToMicroAlgos(e.target.value));
+                                    setDonation(stringToMicroAlgos(e.target.value));
                                 }}
                             />
                         </FloatingLabel>
                         <FloatingLabel
-                            controlId="inputNeededPrice"
+                            controlId="inputGoaldonation"
                             label="Total Donation Goal (Max 9999)"
                             className="mb-3"
                         >
@@ -129,7 +159,7 @@ const AddProduct = ({createProduct}) => {
                                 max={10}
                                 placeholder="Total Needed Donation in ALGO (Max 9999)"
                                 onChange={(e) => {
-                                    setNeededPrice(stringToMicroAlgos(e.target.value));
+                                    setGoaldonation(stringToMicroAlgos(e.target.value));
                                 }}
                             />
                         </FloatingLabel>
@@ -148,8 +178,8 @@ const AddProduct = ({createProduct}) => {
                                 image,
                                 description,
                                 link,
-                                price,
-                                neededprice
+                                donation,
+                                goaldonation
                             });
                             handleClose();
                         }}

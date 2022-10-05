@@ -10,12 +10,89 @@
 body {
   margin: 0;
   font-family: 'Ubuntu',-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen','Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-repeat: no-repeat;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  color: #f9f9f9;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.fs-7 {
+  font-size: .9rem !important;
+}
+
+.fs-8 {
+  font-size: .8rem !important;
+}
+
+.fs-9 {
+  font-size: .7rem !important;
+}
+
+.bg-orange {
+  background-color:#F96666 !important;
+  border-color: #F96666 !important;
+}
+
+.fs-01 {
+  font-size: 60px;
+  line-height: 90px;
+}
+
+.bg-custom-1 {
+  background-image: conic-gradient(#212529 30%, #2a2d31 40%, #31353a 70%, #272a2e 80%, #212529) !important;
+}
+
+.cover-title {
+  background-image: conic-gradient(#c94bf0 30%, #ff5050 40%, #e5ff50 70%, #00cb8e 80%, #9125da) !important;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.border-dotted {
+  border:dashed 3px !important;  
+}
+
+.desktop-vh-100 {
+  min-height: 80vh !important;
+}
+
+/* mobile screens */
+@media only screen and (max-width: 600px) {
+
+  .desktop-vh-100 {
+    height: 'auto'
+  }
+
+  .fs-01 {
+    font-size: 40px;
+    line-height: 60px;
+  }
+
+  .mobile-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .mobile-pt-1 {
+    padding-top: 16px !important;
+  }
+
+  .mobile-block {
+    display: block;
+    height: max-content !important;
+  }
+  
 }

@@ -1,6 +1,8 @@
 import React from "react";
-import {ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import PropTypes from "prop-types";
+import { algoExpTest } from "../../utils/constants";
+import { Button } from "react-bootstrap";
 
 const Notification = () => (
     <ToastContainer
@@ -16,16 +18,24 @@ const Notification = () => (
     />
 );
 
-const NotificationSuccess = ({text}) => (
-    <div>
-        <i className="bi bi-check-circle-fill text-success mx-2"/>
+const NotificationSuccess = ({ text, tx_id, type ='tx'}) => (
+    <div className="d-flex">
+        <i className="bi bi-check-circle-fill text-success mx-2" />
         <span className="text-secondary mx-1">{text}</span>
+        <Button
+            href={algoExpTest+type+"/"+tx_id}
+            target="_blank"
+            variant="dark"
+            className="rounded-pill px-0 mx-1 d-flex justify-content-center align-items-center"
+            style={{ width: "55px" }}>
+            <i className="bi bi-arrow-up-right-square text-light"></i>
+        </Button>
     </div>
 );
 
-const NotificationError = ({text}) => (
+const NotificationError = ({ text }) => (
     <div>
-        <i className="bi bi-x-circle-fill text-danger mx-2"/>
+        <i className="bi bi-x-circle-fill text-danger mx-2" />
         <span className="text-secondary mx-1">{text}</span>
     </div>
 );
@@ -44,4 +54,4 @@ NotificationSuccess.defaultProps = DefaultProps;
 NotificationError.propTypes = Props;
 NotificationError.defaultProps = DefaultProps;
 
-export {Notification, NotificationSuccess, NotificationError};
+export { Notification, NotificationSuccess, NotificationError };

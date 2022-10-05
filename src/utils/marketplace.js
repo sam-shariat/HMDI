@@ -2,7 +2,7 @@ import algosdk from "algosdk";
 import {
     algodClient,
     indexerClient,
-    marketplaceNote,
+    HMDINote,
     minRound,
     myAlgoConnect,
     numGlobalBytes,
@@ -11,19 +11,20 @@ import {
     numLocalInts
 } from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
-import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
-import clearProgram from "!!raw-loader!../contracts/marketplace_clear.teal";
+import approvalProgram from "!!raw-loader!../contracts/HMDI_approval.teal";
+import clearProgram from "!!raw-loader!../contracts/HMDI_clear.teal";
 import {base64ToUTF8String, utf8ToBase64String} from "./conversions";
 
 class Product {
-    constructor(name, image, description, link, price, neededprice, sold, appId, owner) {
+    constructor(name, image, description, link, donation, goaldonation, donated, uwallets, appId, owner) {
         this.name = name;
         this.image = image;
         this.description = description;
         this.link = link;
-        this.price = price;
-        this.neededprice = neededprice;
-        this.sold = sold;
+        this.donation = donation;
+        this.goaldonation = goaldonation;
+        this.donated = donated;
+        this.uwallets = uwallets;
         this.appId = appId;
         this.owner = owner;
     }
@@ -50,15 +51,15 @@ export const createProductAction = async (senderAddress, product) => {
     const compiledClearProgram = await compileProgram(clearProgram)
 
     // Build note to identify transaction later and required app args as Uint8Arrays
-    let note = new TextEncoder().encode(marketplaceNote);
+    let note = new TextEncoder().encode(HMDINote);
     let name = new TextEncoder().encode(product.name);
     let image = new TextEncoder().encode(product.image);
     let description = new TextEncoder().encode(product.description);
     let link = new TextEncoder().encode(product.link);
-    let price = algosdk.encodeUint64(product.price);
-    let neededprice = algosdk.encodeUint64(product.neededprice);
+    let donation = algosdk.encodeUint64(product.donation);
+    let goaldonation = algosdk.encodeUint64(product.goaldonation);
 
-    let appArgs = [name, image, description, link, price, neededprice]
+    let appArgs = [name, image, description, link, donation, goaldonation]
 
     // Create ApplicationCreateTxn
     let txn = algosdk.makeApplicationCreateTxnFromObject({
@@ -93,7 +94,7 @@ export const createProductAction = async (senderAddress, product) => {
     let transactionResponse = await algodClient.pendingTransactionInformation(txId).do();
     let appId = transactionResponse['application-index'];
     console.log("Created new app-id: ", appId);
-    return appId;
+    return [appId,txId];
 }
 
 export const buyProductAction = async (senderAddress, product, count) => {
@@ -104,7 +105,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
     params.flatFee = true;
 
     // Build required app args as Uint8Array
-    let buyArg = new TextEncoder().encode("buy")
+    let buyArg = new TextEncoder().encode("donate")
     let countArg = algosdk.encodeUint64(count);
     let appArgs = [buyArg, countArg]
 
@@ -121,7 +122,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
     let paymentTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
         from: senderAddress,
         to: product.owner,
-        amount: product.price * count,
+        amount: product.donation * count,
         suggestedParams: params
     })
 
@@ -179,7 +180,7 @@ export const deleteProductAction = async (senderAddress, index) => {
 // GET PRODUCTS: Use indexer
 export const getProductsAction = async () => {
     console.log("Fetching products...")
-    let note = new TextEncoder().encode(marketplaceNote);
+    let note = new TextEncoder().encode(HMDINote);
     let encodedNote = Buffer.from(note).toString("base64");
 
     // Step 1: Get all transactions by notePrefix (+ minRound filter for performance)
@@ -203,6 +204,33 @@ export const getProductsAction = async () => {
     return products
 }
 
+export const getProductAction = async (appId) => {
+    console.log("Fetching product...")
+    let note = new TextEncoder().encode(HMDINote);
+    let encodedNote = Buffer.from(note).toString("base64");
+
+    // Step 1: Get all transactions by notePrefix (+ minRound filter for performance)
+    let transactionInfo = await indexerClient.searchForTransactions()
+        .notePrefix(encodedNote)
+        .applicationID(appId)
+        .txType("appl")
+        .minRound(minRound)
+        .do();
+    let products = []
+    for (const transaction of transactionInfo.transactions) {
+        let appId = transaction["created-application-index"]
+        if (appId) {
+            // Step 2: Get each application by application id
+            let product = await getApplication(appId)
+            if (product) {
+                products.push(product)
+            }
+        }
+    }
+    console.log("Product fetched.")
+    return products
+}
+
 const getApplication = async (appId) => {
     try {
         // 1. Get application by appId
@@ -218,9 +246,10 @@ const getApplication = async (appId) => {
         let image = ""
         let description = ""
         let link = ""
-        let price = 0
-        let neededprice = 0
-        let sold = 0
+        let donation = 0
+        let goaldonation = 0
+        let donated = 0
+        let uwallets = 0
 
         const getField = (fieldName, globalState) => {
             return globalState.find(state => {
@@ -248,19 +277,23 @@ const getApplication = async (appId) => {
             link = base64ToUTF8String(field)
         }
 
-        if (getField("PRICE", globalState) !== undefined) {
-            price = getField("PRICE", globalState).value.uint
+        if (getField("DONATION", globalState) !== undefined) {
+            donation = getField("DONATION", globalState).value.uint
         }
 
-        if (getField("NEEDEDPRICE", globalState) !== undefined) {
-            neededprice = getField("NEEDEDPRICE", globalState).value.uint
+        if (getField("GOALDONATION", globalState) !== undefined) {
+            goaldonation = getField("GOALDONATION", globalState).value.uint
         }
 
-        if (getField("SOLD", globalState) !== undefined) {
-            sold = getField("SOLD", globalState).value.uint
+        if (getField("DONATED", globalState) !== undefined) {
+            donated = getField("DONATED", globalState).value.uint
         }
 
-        return new Product(name, image, description, link, price, neededprice, sold, appId, owner)
+        if (getField("UWALLETS", globalState) !== undefined) {
+            uwallets = getField("UWALLETS", globalState).value.uint
+        }
+
+        return new Product(name, image, description, link, donation, goaldonation, donated, uwallets, appId, owner)
     } catch (err) {
         return null;
     }

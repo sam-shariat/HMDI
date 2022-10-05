@@ -1,0 +1,57 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l6
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l5
+txna ApplicationArgs 0
+byte "edit"
+==
+bnz main_l4
+err
+main_l4:
+byte "NAME"
+txna ApplicationArgs 1
+app_global_put
+byte "IMAGE"
+txna ApplicationArgs 2
+app_global_put
+byte "BIO"
+txna ApplicationArgs 3
+app_global_put
+byte "LINK"
+txna ApplicationArgs 4
+app_global_put
+int 1
+return
+main_l5:
+txn Sender
+global CreatorAddress
+==
+return
+main_l6:
+txn NumAppArgs
+int 5
+==
+assert
+txn Note
+byte "HMDI-profiles:uv001"
+==
+assert
+byte "NAME"
+txna ApplicationArgs 0
+app_global_put
+byte "IMAGE"
+txna ApplicationArgs 1
+app_global_put
+byte "BIO"
+txna ApplicationArgs 2
+app_global_put
+byte "LINK"
+txna ApplicationArgs 3
+app_global_put
+int 1
+return
