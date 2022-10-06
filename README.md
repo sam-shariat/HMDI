@@ -5,7 +5,7 @@
 <p align="justify">A Decentralized Platform to Raise Funds ( in ALGOs ) For Your Most Important Project and Donate Some ALGO(s) To Help Your Fellows In Need</p>
 </div>
 <br/>
-<h3 align="left"> Live Demo : https://github.com/sam-shariat/HMDI/ </h3>
+<h3 align="left"><a href="https://sam-shariat.github.io/HMDI/" target="_blank">Live Demo</a></h3>
 
 - This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
 - Algorand Official SDK : [algosdk](https://www.npmjs.com/package/algosdk)
