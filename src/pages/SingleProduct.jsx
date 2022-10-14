@@ -20,43 +20,42 @@ const SingleProduct = ({ address, fetchBalance }) => {
 	}
 
 	const getProducts = async () => {
-		setLoading(true);
-		getProductAction(appId)
-			.then(products => {
-				if (products) {
-					setProducts(products);
-					console.log(products);
-				}
-			})
-			.catch(error => {
-				console.log(error);
-			})
-			.finally(_ => {
-				setLoading(false);
-			});
+		try {
+			setLoading(true);
+			const products = await getProductAction(appId)
+			if (products) {
+				setProducts(products);
+				console.log(products);
+			}
+
+		}catch (e) {
+			console.log({e})
+		}
+		finally {
+			setLoading(false)
+		}
 	};
 
 	useEffect(() => {
 		getProducts();
 	}, []);
 
-	const likeProject = async (data) => {
-		
-	};
 
 	const buyProduct = async (product, count) => {
-		setLoading(true);
-		buyProductAction(address, product, count)
-			.then(() => {
-				toast(<NotificationSuccess text="Donated to Project successfully" />);
-				getProducts();
-				fetchBalance(address);
-			})
-			.catch(error => {
-				console.log(error)
-				toast(<NotificationError text="Failed to Donate Project. Please Try Again" />);
-				setLoading(false);
-			})
+		try {
+			setLoading(true);
+			await buyProductAction(address, product, count)
+
+			toast(<NotificationSuccess text="Donated to Project successfully" />);
+			getProducts();
+			fetchBalance(address);
+		}catch (e) {
+			console.log(error)
+			toast(<NotificationError text="Failed to Donate Project. Please Try Again" />);
+		}finally {
+			setLoading(false);
+		}
+
 	};
 
 	const deleteProduct = async (product) => {
@@ -83,7 +82,6 @@ const SingleProduct = ({ address, fetchBalance }) => {
 				<h1 className="fs-3 mb-0">{products[0].name}</h1>
 				<div>
 					<Button
-						onClick={likeProject}
 						variant="dark"
 						className="rounded-pill px-0 mx-1"
 						style={{ width: "45px" }}
@@ -95,8 +93,8 @@ const SingleProduct = ({ address, fetchBalance }) => {
 						variant="dark"
 						className="rounded-pill px-0"
 						style={{ width: "50px" }}
-						data-bs-toggle="tooltip" data-bs-placement="top" title={`${comments} | Comment`} > 
-						{comments}&nbsp;&nbsp;<i className="bi bi-chat-square-text"></i> 
+						data-bs-toggle="tooltip" data-bs-placement="top" title={`${comments} | Comment`} >
+						{comments}&nbsp;&nbsp;<i className="bi bi-chat-square-text"></i>
 
 					</Button>
 				</div>
