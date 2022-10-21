@@ -11,14 +11,13 @@ import {Row} from "react-bootstrap";
 const Products = ({address, fetchBalance}) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
-    
+
     const getProducts = async () => {
         setLoading(true);
         getProductsAction()
             .then(products => {
                 if (products) {
                     setProducts(products);
-					console.log(products);
                 }
             })
             .catch(error => {
@@ -64,18 +63,19 @@ const Products = ({address, fetchBalance}) => {
 	};
 
     const deleteProduct = async (product) => {
-        setLoading(true);
-        deleteProductAction(address, product.appId)
-            .then(() => {
-                toast(<NotificationSuccess text="Project deleted successfully"/>);
-                getProducts();
-                fetchBalance(address);
-            })
-            .catch(error => {
-                console.log(error)
-                toast(<NotificationError text="Failed to delete project."/>);
-                setLoading(false);
-            })
+		try {
+			setLoading(true);
+			await deleteProductAction(address, product.appId)
+			toast(<NotificationSuccess text="Project deleted successfully"/>);
+			getProducts();
+			fetchBalance(address);
+		} catch (e) {
+			console.log(e)
+			toast(<NotificationError text="Failed to delete project."/>);
+
+		} finally {
+			setLoading(false);
+		}
     };
 
     if (loading) {
