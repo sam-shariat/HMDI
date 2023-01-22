@@ -1,19 +1,76 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, FloatingLabel, Form, Image, Modal } from "react-bootstrap";
+import { Button, Container, FloatingLabel, Form, FormLabel, Image, Modal } from "react-bootstrap";
 import { stringToMicroAlgos } from "../../utils/conversions";
 import axios from 'axios';
+import ReactQuill from 'react-quill';
+import '../../styles/quill.snow.css';
 
-const AddProduct = ({ createProduct }) => {
+const AddProduct = ({ createProduct , className, label}) => {
     const [name, setName] = useState("");
     const [image, setImage] = useState("");
     const [description, setDescription] = useState("");
-    const [link, setLink] = useState("");
+    const [longdes, setLongdes] = useState('');
     const [donation, setDonation] = useState(0);
     const [fileImg, setFileImg] = useState(null);
     const [goaldonation, setGoaldonation] = useState(0);
 
-    const sendproFileToIPFS = async (e) => {
+    const handleLongDes=(e)=> {
+        setLongdes(e);
+    }
+
+    const handleFormSubmit = async() =>{
+        var link = '';
+        var data = JSON.stringify({
+            "pinataOptions": {
+              "cidVersion": 1
+            },
+            "pinataMetadata": {
+              "name": name,
+              "keyvalues": {
+                "image": image,
+                "description": description
+              }
+            },
+            "pinataContent": {
+              "content": longdes
+            }
+          });
+        try {
+            console.log('uploading description to ipfs')
+            const resFile = await axios({
+                method: "post",
+                url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+                data: data,
+                headers: {
+                    'Authorization': `Bearer ${process.env.REACT_APP_PINATA_JWT}`,
+                    'pinata_api_key': `${process.env.REACT_APP_PINATA_API_KEY}`,
+                    'pinata_secret_api_key': `${process.env.REACT_APP_PINATA_API_SECRET}`,
+                    "Content-Type": "application/json"
+                },
+            });
+
+            link = resFile.data.IpfsHash;
+            //Take a look at your Pinata Pinned section, you will see a new file added to you list.   
+
+        } catch (error) {
+            console.log("Error sending description to IPFS: ")
+            console.log(error)
+            return ;
+        }
+
+        createProduct({
+            name,
+            image,
+            description,
+            link,
+            donation,
+            goaldonation
+        });
+        handleClose();
+    }
+
+    const sendFileToIPFS = async (e) => {
         if (fileImg) {
             try {
 
@@ -32,7 +89,7 @@ const AddProduct = ({ createProduct }) => {
                     },
                 });
 
-                const ImgHash = `https://gateway.pinata.cloud/ipfs/${resFile.data.IpfsHash}`;
+                const ImgHash = resFile.data.IpfsHash;
                 console.log(ImgHash);
                 setImage(ImgHash);
                 //Take a look at your Pinata Pinned section, you will see a new file added to you list.   
@@ -47,18 +104,17 @@ const AddProduct = ({ createProduct }) => {
     const isFormFilled = useCallback(() => {
         if (name.length > 162 || name.length < 1) { return false }
         console.log(name)
+        console.log(longdes);
         if (image.length > 162 || image.length < 1) { return false }
         console.log(image)
         if (description.length > 162 || description.length < 1) { return false }
         console.log(description)
-        if (link.length > 162 || link.length < 1) { return false }
-        console.log(link)
         if ((Number(donation) / 1000000) >= 100 || (Number(donation) / 1000000) < 1) { return false }
         if ((Number(goaldonation) / 1000000) >= 10000 || (Number(goaldonation) / 1000000) < 1) { return false }
         if (Number(goaldonation) < 0 || Number(donation) < 0) { return false }
         console.log(goaldonation)
         return true;
-    }, [name, image, description, link, donation, goaldonation]);
+    }, [name, image, description, longdes, donation, goaldonation]);
 
     const [show, setShow] = useState(false);
 
@@ -69,36 +125,38 @@ const AddProduct = ({ createProduct }) => {
             <Button
                 onClick={handleShow}
                 variant="dark"
-                className="rounded-pill px-0"
-                style={{ width: "138px" }}
+                className={className}
+                style={{ width: "fit-content" }}
             >
-                <i className="bi bi-plus"></i>
-                Add Project
+                {label}
             </Button>
-            <Modal show={show} onHide={handleClose} centered>
+            <Modal show={show} onHide={handleClose} centered fullscreen className="thin-scroll bg-white">
+            <Container fluid="md">
                 <Modal.Header className="d-flex flex-column">
                     <Modal.Title>Raise Funds</Modal.Title>
                     <p>Tell Us More About Your Project</p>
                 </Modal.Header>
-                <Form>
+                <Form className="h-fit-content">
                     <Modal.Body>
-                        <FloatingLabel
-                            controlId="inputName"
-                            label="Project Name"
-                            className="mb-3"
-                        >
+                    <Form.Label>Project Name</Form.Label>
                             <Form.Control
                                 type="text"
                                 onChange={(e) => {
                                     setName(e.target.value);
                                 }}
-                                placeholder="Enter name of project"
+                                className="py-2 mb-3"
+                                placeholder="Enter Your Cause"
                             />
-                        </FloatingLabel>
+                        
                         <Form.Label>Select Image</Form.Label>
                         <div className="d-flex gap-2 mb-3">
-                            <Form.Control type="file" onChange={(e) => setFileImg(e.target.files[0])} accept="image/x-png,image/gif,image/jpeg" />
-                            <Button variant="primary" onClick={sendproFileToIPFS}>
+                            <Form.Control
+                                className="py-2"
+                                type="file" onChange={(e) => { 
+                                setFileImg(e.target.files[0])
+                                e.target.value=''
+                                }} accept="image/x-png,image/gif,image/jpeg" />
+                            <Button variant="primary" onClick={sendFileToIPFS}>
                                 Upload
                             </Button>
                         </div>
@@ -106,13 +164,11 @@ const AddProduct = ({ createProduct }) => {
                         <div className="mb-3">
                             <Image src={image} rounded className="w-100" />
                         </div>}
-                        <FloatingLabel
-                            controlId="inputDescription"
-                            label={`Description ( ${description.length}/112 Chars )`}
-                            className="mb-3"
-                        >
+                        <Form.Label>{`Description ( ${description.length}/112 Chars )`}
+                        </Form.Label>
                             <Form.Control
                                 as="textarea"
+                                className="mb-3"
                                 placeholder="I need 200 ALGOs to build a website to promote what I do"
                                 maxLength={162}
                                 style={{ height: "80px" }}
@@ -120,21 +176,7 @@ const AddProduct = ({ createProduct }) => {
                                     setDescription(e.target.value);
                                 }}
                             />
-                        </FloatingLabel>
-                        <FloatingLabel
-                            controlId="inputLinkUrl"
-                            label="Link To Proposal or Website"
-                            className="mb-3"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="Link to your proposal"
-                                value={link}
-                                onChange={(e) => {
-                                    setLink(e.target.value);
-                                }}
-                            />
-                        </FloatingLabel>
+                        
                         <FloatingLabel
                             controlId="inputDonation"
                             label="Each Donation (Max 99)"
@@ -163,6 +205,24 @@ const AddProduct = ({ createProduct }) => {
                                 }}
                             />
                         </FloatingLabel>
+                        <FormLabel className="mb-2">
+                            Your Proposal
+                        </FormLabel>
+                        <ReactQuill 
+                        modules={{
+                            toolbar: [
+                              [{ header: [1, 2, 3, false] }],
+                              [{'align':[]}],
+                              ['bold', 'italic', 'underline'],
+                              [{'list': 'ordered'}, {'list': 'bullet'},'code-block'],
+                              ['link','image','video']
+                            ]
+                          }}
+                        style={{height:'120px',marginBottom:'50px'}} 
+                        theme="snow" 
+                        value={longdes} 
+                        onChange={handleLongDes} />
+                        
                     </Modal.Body>
                 </Form>
                 <Modal.Footer>
@@ -172,21 +232,11 @@ const AddProduct = ({ createProduct }) => {
                     <Button
                         variant="primary"
                         disabled={!isFormFilled()}
-                        onClick={() => {
-                            createProduct({
-                                name,
-                                image,
-                                description,
-                                link,
-                                donation,
-                                goaldonation
-                            });
-                            handleClose();
-                        }}
-                    >
-                        Save Project To Start Raising Funds
+                        onClick={handleFormSubmit}>
+                        Publish Project To Start Raising Funds
                     </Button>
                 </Modal.Footer>
+                </Container>
             </Modal>
         </>
     );
@@ -194,6 +244,12 @@ const AddProduct = ({ createProduct }) => {
 
 AddProduct.propTypes = {
     createProduct: PropTypes.func.isRequired,
+    className: PropTypes.string,
 };
+
+AddProduct.defaultProps = {
+    className:"rounded-pill px-3",
+    label:"Get Started"
+}
 
 export default AddProduct;

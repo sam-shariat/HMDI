@@ -37,8 +37,8 @@ const Comments = ({address,uid,name,gComments}) => {
     const createComment = async (data) => {
 	    setLoading(true);
 	    createCommentAction(address, data, uid)
-	        .then((results) => {
-	            toast(<NotificationSuccess text="Comment added successfully." tx_id={results[1]}/>);
+	        .then((tx) => {
+	            toast(<NotificationSuccess text="Comment added successfully." tx_id={tx[1]}/>);
 	            getComments();
 	        })
 	        .catch(error => {

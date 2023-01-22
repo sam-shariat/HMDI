@@ -9,7 +9,7 @@ class Comments:
     def application_creation(self):
         return Seq([
             Assert(Txn.application_args.length() == Int(2)),
-            Assert(Txn.note() == Bytes("HMDI-comments:uv001")),
+            Assert(Txn.note() == Bytes("HMDI-comments:uv002")),
             App.globalPut(self.Variables.uid, Btoi(Txn.application_args[0])),
             App.globalPut(self.Variables.comment, Txn.application_args[1]),
             Approve()

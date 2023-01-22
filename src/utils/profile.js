@@ -90,11 +90,9 @@ export const createProfileAction = async (senderAddress, profile) => {
 }
 
 export const editProfileAction = async (senderAddress, profile) => {
-    console.log("Edit Profile...");
+    console.log("Edit Profile..."+profile.appId);
 
     let params = await algodClient.getTransactionParams().do();
-    params.fee = algosdk.ALGORAND_MIN_TX_FEE;
-    params.flatFee = true;
 
     // Build required app args as Uint8Array
     let editArg = new TextEncoder().encode("edit");
@@ -105,7 +103,7 @@ export const editProfileAction = async (senderAddress, profile) => {
     let appArgs = [editArg, name, image, bio, link];
 
     // Create ApplicationCallTxn
-    let appCallTxn = algosdk.makeApplicationCallTxnFromObject({
+    let txn = algosdk.makeApplicationCallTxnFromObject({
         from: senderAddress,
         appIndex: profile.appId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
@@ -113,32 +111,22 @@ export const editProfileAction = async (senderAddress, profile) => {
         appArgs: appArgs,
     });
 
-    let txnArray = [appCallTxn];
+    let txId = txn.txID().toString();
 
-    // Create group transaction out of previously build transactions
-    let groupID = algosdk.computeGroupID(txnArray);
-    for (let i = 0; i < 1; i++) txnArray[i].group = groupID;
+    // Sign & submit the transaction
+    let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
+    console.log("Signed transaction with txID: %s", txId);
+    await algodClient.sendRawTransaction(signedTxn.blob).do();
 
-    // Sign & submit the group transaction
-    let signedTxn = await myAlgoConnect.signTransaction(
-        txnArray.map((txn) => txn.toByte())
-    );
-    console.log("Signed group transaction");
-    let tx = await algodClient
-        .sendRawTransaction(signedTxn.map((txn) => txn.blob))
-        .do();
-
-    // Wait for group transaction to be confirmed
-    let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
-
-    // Notify about completion
+    // Wait for transaction to be confirmed
+    let confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
     console.log(
-        "Group transaction " +
-        tx.txId +
-        " confirmed in round " +
-        confirmedTxn["confirmed-round"]
-    );
-    return [profile.appId, tx.txId];
+    "Transaction " +
+      txId +
+      " confirmed in round " +
+      confirmedTxn["confirmed-round"]
+  );
+    return [profile.appId, txId];
 };
 //...
 // GET PRODUCTS: Use indexer
@@ -146,7 +134,7 @@ export const getProfileAction = async (senderAddress) => {
     console.log("Fetching Profile...")
     let note = new TextEncoder().encode(HMDIProfilesNote);
     let encodedNote = Buffer.from(note).toString("base64");
-
+    console.log('sender address :', senderAddress)
     // Step 1: Get all transactions by notePrefix (+ minRound filter for performance)
     let transactionInfo = await indexerClient.searchForTransactions()
         .notePrefix(encodedNote)

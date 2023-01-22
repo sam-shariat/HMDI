@@ -2,17 +2,28 @@
 txn ApplicationID
 int 0
 ==
-bnz main_l6
+bnz main_l8
 txn OnCompletion
 int DeleteApplication
 ==
-bnz main_l5
+bnz main_l7
 txna ApplicationArgs 0
 byte "edit"
 ==
 bnz main_l4
 err
 main_l4:
+txn Sender
+global CreatorAddress
+==
+bnz main_l6
+int 0
+return
+main_l6:
+txn NumAppArgs
+int 5
+==
+assert
 byte "NAME"
 txna ApplicationArgs 1
 app_global_put
@@ -27,18 +38,18 @@ txna ApplicationArgs 4
 app_global_put
 int 1
 return
-main_l5:
+main_l7:
 txn Sender
 global CreatorAddress
 ==
 return
-main_l6:
+main_l8:
 txn NumAppArgs
-int 5
+int 4
 ==
 assert
 txn Note
-byte "HMDI-profiles:uv001"
+byte "HMDI-profiles:uv002"
 ==
 assert
 byte "NAME"

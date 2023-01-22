@@ -42,10 +42,13 @@ const NotificationError = ({ text }) => (
 
 const Props = {
     text: PropTypes.string,
+    tx_id: PropTypes.string,
+    type: PropTypes.string,
 };
 
 const DefaultProps = {
     text: "",
+    type:"tx"
 };
 
 NotificationSuccess.propTypes = Props;

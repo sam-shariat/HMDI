@@ -10,10 +10,10 @@ export const truncateAddress = (address) => {
 }
 
 // Amounts in microAlgos (e.g. 10500) are shown as algos (e.g. 10.5) in the frontend
-export const microAlgosToString = (num) => {
+export const microAlgosToString = (num,num2=3) => {
     if (!num) return
     let bigNumber = new BigNumber(num)
-    return bigNumber.shiftedBy(-ALGORAND_DECIMALS).toFixed(3);
+    return bigNumber.shiftedBy(-ALGORAND_DECIMALS).toFixed(num2);
 }
 
 // Convert an amount entered as algos (e.g. 10.5) to microAlgos (e.g. 10500)

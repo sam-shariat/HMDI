@@ -1,25 +1,72 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Button, FloatingLabel, Form, Image, Modal, Stack } from "react-bootstrap";
 import axios from 'axios';
+import { getProfileAction } from '../../utils/profile';
+import Loader from '../utils/Loader'
 
-const AddProfile = ({ createProfile }) => {
+
+const AddProfile = ({ createProfile, editProfile, address}) => {
+    const [appId, setAppId] = useState(0);
     const [name, setName] = useState("");
     const [image, setImage] = useState("");
     const [bio, setBio] = useState("");
     const [link, setLink] = useState("");
     const [profileImg, setProfileImg] = useState(null);
     const [showprofile, setShowprofile] = useState(false);
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    
+    const getProfile = async () => {
+        setLoading(true);
+        getProfileAction(address)
+            .then(profiles => {
+                if (profiles.length > 0) {
+                    setProfile(profiles[0]);
+                    setAppId(profiles[0].appId);
+                    setName(profiles[0].name);
+                    setImage(profiles[0].image);
+                    setBio(profiles[0].bio);
+                    setLink(profiles[0].link);
+					console.log(profiles[0]);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            })
+            .finally(_ => {
+                setLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        getProfile();
+    }, []);
 
     const handleClose = () => setShowprofile(false);
     const handleShow = () => setShowprofile(true);
 
-    const sendFileToIPFS = async (e) => {
-        if (profileImg) {
+      function buildFileSelector(){
+        const fileSelector = document.createElement('input');
+        fileSelector.type = 'file';
+        fileSelector.multiple = false;
+        fileSelector.onchange = async (e) => { 
+            setProfileImg(e.target.files[0])
+            console.log(e.target.files[0])
+            sendproFileToIPFS(e.target.files[0]);
+        }
+        fileSelector.accept = 'image/x-png,image/gif,image/jpeg'
+        return fileSelector;
+      }
+
+      const fileSelect = buildFileSelector();
+
+    const sendproFileToIPFS = async (e) => {
+        if (profileImg || e) {
             try {
 
                 const formData = new FormData();
-                formData.append("file", profileImg);
+                formData.append("file", e);
                 console.log('uploading file to ipfs')
                 const resFile = await axios({
                     method: "post",
@@ -63,7 +110,7 @@ const AddProfile = ({ createProfile }) => {
             <Stack onClick={handleShow} direction="horizontal" gap={2}>
                 <i className="bi bi-person fs-4" />
                 <div className="d-flex flex-column">
-                    <span className="font-monospace">Your Profile</span>
+                    <span className="font-monospace">Profile</span>
                 </div>
             </Stack>
             <Modal show={showprofile} onHide={handleClose} centered>
@@ -73,6 +120,18 @@ const AddProfile = ({ createProfile }) => {
                 </Modal.Header>
                 <Form id="profileform">
                     <Modal.Body>
+                        {loading && <Loader height='50px' text='Fetching Profile Data' mode='dark'/>}
+                        <center>
+                        {image !== '' ? 
+                        <Image className="my-3 mx-2" width={120} height={120} src={image} roundedCircle onClick={()=> fileSelect.click()} />
+                        : 
+                        <Button onClick={()=> fileSelect.click()} 
+                        className="rounded-circle py-3 px-2 mb-3 d-flex flex-column justify-content-center align-items-center">
+                            <i className="bi bi-person fs-1 px-1" />
+                            <p className="px-1"><b>Profile Picture</b></p>
+                            </Button>
+                        }
+                        </center>
                         <FloatingLabel
                             controlId="inputProfileName"
                             label="Name"
@@ -80,23 +139,13 @@ const AddProfile = ({ createProfile }) => {
                         >
                             <Form.Control
                                 type="text"
+                                value={name}
                                 onChange={(e) => {
                                     setName(e.target.value);
                                 }}
                                 placeholder="Enter Name"
                             />
-                        </FloatingLabel>
-                        <Form.Label>Select Profile Image</Form.Label>
-                        <div className="d-flex gap-2 mb-3">
-                            <Form.Control aria-controls="proFile" id="proFile" type="file" onChange={(f) => setProfileImg(f.target.files[0])} accept="image/x-png,image/gif,image/jpeg" />
-                            <Button variant="primary" onClick={sendFileToIPFS}>
-                                Upload
-                            </Button>
-                        </div>
-                        {image !== "" &&
-                            <div className="mb-3">
-                                <Image src={image} rounded className="w-100" />
-                            </div>}
+                        </FloatingLabel>                        
                         <FloatingLabel
                             controlId="inputBio"
                             label={`Bio ( ${bio.length}/112 Chars )`}
@@ -105,6 +154,8 @@ const AddProfile = ({ createProfile }) => {
                             <Form.Control
                                 as="textarea"
                                 placeholder="Junior Blockchain Developer, Farmer"
+                                type="text"
+                                value={bio}
                                 maxLength={112}
                                 style={{ height: "80px" }}
                                 onChange={(e) => {
@@ -136,16 +187,26 @@ const AddProfile = ({ createProfile }) => {
                         variant="primary"
                         disabled={!isFormFilled()}
                         onClick={() => {
-                            createProfile({
-                                name,
-                                image,
-                                bio,
-                                link
-                            });
-                            handleClose();
+                            if(profile){
+                                editProfile({
+                                    name,
+                                    image,
+                                    bio,
+                                    link,
+                                    appId
+                                });
+                            } else {
+                                createProfile({
+                                    name,
+                                    image,
+                                    bio,
+                                    link
+                                });
+                                handleClose();
+                            }
                         }}
                     >
-                        Save Profile
+                        {profile ? 'Update ' : 'Save ' }Profile
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -155,6 +216,8 @@ const AddProfile = ({ createProfile }) => {
 
 AddProfile.propTypes = {
     createProfile: PropTypes.func.isRequired,
+    editProfile: PropTypes.func.isRequired,
+    address: PropTypes.string
 };
 
 export default AddProfile;

@@ -10,7 +10,7 @@ int 2
 ==
 assert
 txn Note
-byte "HMDI-comments:uv001"
+byte "HMDI-comments:uv002"
 ==
 assert
 byte "UID"

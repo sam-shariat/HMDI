@@ -8,7 +8,7 @@ const ProductSingle = ({ address, product, buyProduct, deleteProduct }) => {
     const { name, image, description, link, donation, goaldonation, donated, uwallets, appId, owner } =
         product;
     const [isMobile, setIsMobile] = useState(false)
-
+    const [profile, setProfile] = useState(null)
     //choose the screen size 
     const handleResize = () => {
         if (window.innerWidth < 992) {
@@ -42,6 +42,12 @@ const ProductSingle = ({ address, product, buyProduct, deleteProduct }) => {
                         <Card.Title>{name}</Card.Title>
                         <Card.Text className="flex-grow-1">{description}</Card.Text>
                         <Card.Link className="text-decoration-none pb-3 pt-3 fw-bold text-center w-100 border border-primary rounded" href={link} target="_blank">View Proposal</Card.Link>
+                        <Card.Text className="d-flex align-items-center fs-8 mt-3">
+                            {profile ?
+                                <Image className="mx-2" width={28} height={28} src={profile.image} roundedCircle />
+                                :
+                                <Identicon address={owner} size={28} className="mx-2" />
+                            }Added By <br />{truncateAddress(owner)}</Card.Text>
                     </Card.Body>
                 </Card>
             </Col>
@@ -72,12 +78,12 @@ const ProductSingle = ({ address, product, buyProduct, deleteProduct }) => {
                                 className="w-100 py-3 fs-5">
                                 {(pricepercent >= 100) ? (<span>Goal Reached</span>) : (<span>Donate {microAlgosToString(donation) * count} ALGO{microAlgosToString(donation) > 1 ? 's' : ''}</span>)}
                             </Button>
-                            <Form.Select 
-                            value={count}
-                            className="py-3"
-                            onChange={(e) => {
-                                setCount(Number(e.target.value));
-                            }}
+                            <Form.Select
+                                value={count}
+                                className="py-3"
+                                onChange={(e) => {
+                                    setCount(Number(e.target.value));
+                                }}
                             >
                                 <option value="1">Want to help more ?</option>
                                 <option value="2">2x</option>
@@ -100,23 +106,23 @@ const ProductSingle = ({ address, product, buyProduct, deleteProduct }) => {
                     </Card.Body>
                     <Card.Footer>
                         <p className="text-light">Top Donation</p>
-                    <Stack direction="horizontal" gap={2}>
-                    <Identicon size={28} address={owner}/>
-                        <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
-                        <Badge bg="secondary" className="ms-auto">
-                            40 ALGOs
-                        </Badge>
-                    </Stack>
+                        <Stack direction="horizontal" gap={2}>
+                            <Identicon size={28} address={owner} />
+                            <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
+                            <Badge bg="secondary" className="ms-auto">
+                                40 ALGOs
+                            </Badge>
+                        </Stack>
                     </Card.Footer>
                     <Card.Footer>
                         <p className="text-light">Last Donation</p>
-                    <Stack direction="horizontal" gap={2}>
-                    <Identicon size={28} address={owner}/>
-                        <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
-                        <Badge bg="secondary" className="ms-auto">
-                            12 ALGOs
-                        </Badge>
-                    </Stack>
+                        <Stack direction="horizontal" gap={2}>
+                            <Identicon size={28} address={owner} />
+                            <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
+                            <Badge bg="secondary" className="ms-auto">
+                                12 ALGOs
+                            </Badge>
+                        </Stack>
                     </Card.Footer>
                     <Card.Footer>
                         <a href={/*</Card.Footer>process.env.REACT_APP_SITE_URL+'/donations'*/'#'} className="text-light">See All Donations</a>

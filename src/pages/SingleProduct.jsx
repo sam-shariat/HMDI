@@ -4,7 +4,7 @@ import Loader from "../components/utils/Loader";
 import { NotificationError, NotificationSuccess } from "../components/utils/Notifications";
 import { buyProductAction, deleteProductAction, getProductAction, } from "../utils/marketplace";
 import PropTypes from "prop-types";
-import { Button, Row } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import ProductSingle from "../components/marketplace/ProductSingle";
 import Comments from "../components/marketplace/Comments";
 
@@ -49,7 +49,7 @@ const SingleProduct = ({ address, fetchBalance }) => {
 			toast(<NotificationSuccess text="Donated to Project successfully" />);
 			getProducts();
 			fetchBalance(address);
-		}catch (e) {
+		}catch (error) {
 			console.log(error)
 			toast(<NotificationError text="Failed to Donate Project. Please Try Again" />);
 		}finally {
@@ -78,6 +78,7 @@ const SingleProduct = ({ address, fetchBalance }) => {
 	}
 	return (
 		<>
+		<Container fluid="lg">
 			<div className="d-flex justify-content-between align-items-center mb-4">
 				<h1 className="fs-3 mb-0">{products[0].name}</h1>
 				<div>
@@ -111,7 +112,9 @@ const SingleProduct = ({ address, fetchBalance }) => {
 				gComments={setCommentsCount}
 				name={products[0].name}
 				uid={products[0].appId} />
+				</Container>
 		</>
+
 	);
 };
 

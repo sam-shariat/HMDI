@@ -66,7 +66,7 @@ int 6
 ==
 assert
 txn Note
-byte "HMDI:uv001"
+byte "HMDI:uv002"
 ==
 assert
 txna ApplicationArgs 4

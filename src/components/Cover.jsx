@@ -3,6 +3,7 @@ import { Button, Col, Container, Nav, Row } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import { ReactSVG } from 'react-svg'
 import Copyright from './Copyright';
+import InteractiveLogo from './InteractiveLogo';
 
 const Cover = ({ name, title, sub, coverImg, connect }) => {
     return (
@@ -23,9 +24,8 @@ const Cover = ({ name, title, sub, coverImg, connect }) => {
         <main className="d-flex flex-column justify-content-center align-items-center desktop-vh-100 mobile-block">
             <Row xs={1} sm={1} md={2} lg={2} className="text-light mobile-pt-1">
                 <Col xs={12} sm={12} md={6} lg={6} className="d-flex flex-column justify-content-center align-items-center">
-                <div className="p-5 rounded bg-dark">
-                <h2 className='fs-01'>{title}</h2>
-                </div>
+                <span className="pt-5 mt-5" />
+                <InteractiveLogo />
                 </Col>
                 <Col xs={12} sm={12} md={6} lg={6} className="mobile-center">
                 <div className='pt-2 mobile-pt-1 mobile-center'>

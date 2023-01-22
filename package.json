@@ -1,7 +1,7 @@
 {
   "name": "HMDI",
   "homepage": "https://sam-shariat.github.io/HMDI",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@pinata/sdk": "^1.1.26",
@@ -20,6 +20,7 @@
     "react-bootstrap": "^2.5.0",
     "react-dom": "^18.2.0",
     "react-jazzicon": "^1.0.4",
+    "react-quill": "^2.0.0",
     "react-scripts": "^4.0.3",
     "react-svg": "^15.1.8",
     "react-toastify": "^8.1.0",
