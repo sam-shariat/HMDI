@@ -3,10 +3,10 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 
 const config = {
   algodToken: "",
-  algodServer: "https://node.testnet.algoexplorerapi.io",
+  algodServer: "https://testnet-api.algonode.network",
   algodPort: "",
   indexerToken: "",
-  indexerServer: "https://algoindexer.testnet.algoexplorerapi.io",
+  indexerServer: "https://testnet-idx.algonode.network",
   indexerPort: "",
 };
 

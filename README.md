@@ -14,15 +14,17 @@
 ## :point_down: Features
 
 ### working
+
 - Create Project and Raise Funds ( on Algorand Blockchain)
 - Comments on Projects
 - Upload directly to ipfs using pinata API
 
 ### in progress
-- on-chain Profile 
+
+- on-chain Profile
 - likes and comments
 - donations and doners listings
-- many more improvements 
+- many more improvements
 
 <!-- GETTING STARTED -->
 
@@ -35,6 +37,7 @@
 ### Run locally
 
 1. Clone repo
+
    ```sh
    git clone https://github.com/sam-shariat/HMDI.git
    ```
@@ -51,15 +54,13 @@
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
 ## :computer: Development: Connect to testnet wallet
+
 - Create account on testnet using [MyAlgo Wallet](https://wallet.myalgo.com/)
 - Add funds using [faucet](https://bank.testnet.algorand.network/)
 - Start app, click "Connect Wallet" and use MyAlgo Wallet UI to connect testnet wallet
 
-
 <p align="right">(<a href="#top">back to top</a>)</p>
-
 
 <!-- CONTRIBUTING -->
 

@@ -12,7 +12,6 @@ const AddProduct = ({ createProduct , className, label}) => {
     const [description, setDescription] = useState("");
     const [longdes, setLongdes] = useState('');
     const [donation, setDonation] = useState(0);
-    const [fileImg, setFileImg] = useState(null);
     const [goaldonation, setGoaldonation] = useState(0);
 
     const handleLongDes=(e)=> {
@@ -71,11 +70,11 @@ const AddProduct = ({ createProduct , className, label}) => {
     }
 
     const sendFileToIPFS = async (e) => {
-        if (fileImg) {
+        if (e) {
             try {
 
                 const formData = new FormData();
-                formData.append("file", fileImg);
+                formData.append("file", e);
                 console.log('uploading file to ipfs')
                 const resFile = await axios({
                     method: "post",
@@ -153,12 +152,8 @@ const AddProduct = ({ createProduct , className, label}) => {
                             <Form.Control
                                 className="py-2"
                                 type="file" onChange={(e) => { 
-                                setFileImg(e.target.files[0])
-                                e.target.value=''
+                                sendFileToIPFS(e.target.files[0])
                                 }} accept="image/x-png,image/gif,image/jpeg" />
-                            <Button variant="primary" onClick={sendFileToIPFS}>
-                                Upload
-                            </Button>
                         </div>
                         {image !== "" &&
                         <div className="mb-3">
