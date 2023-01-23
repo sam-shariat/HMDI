@@ -3,12 +3,16 @@ import PropTypes from "prop-types";
 import { Badge, Button, Card, Row, Col, FloatingLabel, Form, Stack, Image } from "react-bootstrap";
 import { microAlgosToString, truncateAddress } from "../../utils/conversions";
 import Identicon from "../utils/Identicon";
+import getIPFS from "../../utils/getIPFS";
+import axios from "axios";
+
 
 const ProductSingle = ({ address, product, buyProduct, deleteProduct }) => {
     const { name, image, description, link, donation, goaldonation, donated, uwallets, appId, owner } =
         product;
     const [isMobile, setIsMobile] = useState(false)
     const [profile, setProfile] = useState(null)
+    const [htmlContent,setHtmlContent] = useState(null)
     //choose the screen size 
     const handleResize = () => {
         if (window.innerWidth < 992) {
@@ -29,6 +33,10 @@ const ProductSingle = ({ address, product, buyProduct, deleteProduct }) => {
     // create an event listener
     useEffect(() => {
         window.addEventListener("resize", handleResize)
+        axios.get(getIPFS(link)).then((e)=>{
+            setHtmlContent(e.data.content)
+            console.log(e);
+        }).catch((e)=> console.log(e))
     })
     const [count, setCount] = useState(1)
     let passed = microAlgosToString(donation) * donated;
@@ -37,11 +45,13 @@ const ProductSingle = ({ address, product, buyProduct, deleteProduct }) => {
         <Row xs={1} sm={1} lg={2} className="g-1 mb-5 g-xl-2 g-xxl-2">
             <Col key={appId} xs={12} sm={12} lg={8}>
                 <Card className="h-100 bg-dark">
-                    <Image rounded src={image} alt={name} />
+                    <Image rounded src={getIPFS(image)} alt={name} />
                     <Card.Body className="d-flex flex-column text-light">
                         <Card.Title>{name}</Card.Title>
                         <Card.Text className="flex-grow-1">{description}</Card.Text>
-                        <Card.Link className="text-decoration-none pb-3 pt-3 fw-bold text-center w-100 border border-primary rounded" href={link} target="_blank">View Proposal</Card.Link>
+                        <Card.Text className="flex-grow-1 pb-3 pt-3 w-100">
+                            {htmlContent && <div dangerouslySetInnerHTML={{__html:htmlContent}} /> }
+                        </Card.Text>
                         <Card.Text className="d-flex align-items-center fs-8 mt-3">
                             {profile ?
                                 <Image className="mx-2" width={28} height={28} src={profile.image} roundedCircle />
