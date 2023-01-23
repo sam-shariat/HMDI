@@ -7,6 +7,7 @@ import { NotificationError, NotificationSuccess } from "../components/utils/Noti
 import { buyProductAction, createProductAction, deleteProductAction, getProductsAction, } from "../utils/marketplace";
 import PropTypes from "prop-types";
 import { Row, Carousel, Container, Image } from "react-bootstrap";
+import getIPFS from "../utils/getIPFS";
 
 const Products = ({ address, fetchBalance }) => {
 	const [products, setProducts] = useState([]);
@@ -89,7 +90,7 @@ const Products = ({ address, fetchBalance }) => {
 					<Image
 						width={'100%'}
 						className="ratio ratio-16x9"
-						src={product.image}
+						src={getIPFS(product.image)}
 						alt={product.name}
 					/>
 					<Carousel.Caption>

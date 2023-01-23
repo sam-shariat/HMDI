@@ -226,6 +226,7 @@ export const getProductsAction = async () => {
     .txType("appl")
     .minRound(minRound)
     .do();
+  console.log(transactionInfo);
   let products = [];
   for (const transaction of transactionInfo.transactions) {
     let appId = transaction["created-application-index"];

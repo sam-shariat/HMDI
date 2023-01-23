@@ -4,6 +4,7 @@ import { Button, FloatingLabel, Form, Image, Modal, Stack } from "react-bootstra
 import axios from 'axios';
 import { getProfileAction } from '../../utils/profile';
 import Loader from '../utils/Loader'
+import getIPFS from "../../utils/getIPFS";
 
 
 const AddProfile = ({ createProfile, editProfile, address}) => {
@@ -80,7 +81,7 @@ const AddProfile = ({ createProfile, editProfile, address}) => {
                     },
                 });
 
-                const ImgHash = `https://gateway.pinata.cloud/ipfs/${resFile.data.IpfsHash}`;
+                const ImgHash = resFile.data.IpfsHash;
                 console.log(ImgHash);
                 setImage(ImgHash);
                 //Take a look at your Pinata Pinned section, you will see a new file added to you list.   
@@ -123,7 +124,7 @@ const AddProfile = ({ createProfile, editProfile, address}) => {
                         {loading && <Loader height='50px' text='Fetching Profile Data' mode='dark'/>}
                         <center>
                         {image !== '' ? 
-                        <Image className="my-3 mx-2" width={120} height={120} src={image} roundedCircle onClick={()=> fileSelect.click()} />
+                        <Image className="my-3 mx-2" width={120} height={120} src={getIPFS(image)} roundedCircle onClick={()=> fileSelect.click()} />
                         : 
                         <Button onClick={()=> fileSelect.click()} 
                         className="rounded-circle py-3 px-2 mb-3 d-flex flex-column justify-content-center align-items-center">

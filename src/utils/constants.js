@@ -3,10 +3,10 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 
 const config = {
   algodToken: "",
-  algodServer: "https://testnet-api.algonode.network",
+  algodServer: "https://testnet-api.algonode.cloud",
   algodPort: "",
   indexerToken: "",
-  indexerServer: "https://testnet-idx.algonode.network",
+  indexerServer: "https://testnet-idx.algonode.cloud",
   indexerPort: "",
 };
 
@@ -27,7 +27,7 @@ export const indexerClient = new algosdk.Indexer(
 
 export const myAlgoConnect = new MyAlgoConnect();
 
-export const minRound = 21540981;
+export const minRound = 26540981;
 
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
 export const HMDINote = "HMDI:uv002";

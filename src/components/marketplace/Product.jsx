@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
-import {Badge, Button, Card, Col, FloatingLabel, Form, Stack} from "react-bootstrap";
-import {microAlgosToString, truncateAddress} from "../../utils/conversions";
-import Identicon from "../utils/Identicon";
+import {Card, Col} from "react-bootstrap";
+import {microAlgosToString} from "../../utils/conversions";
+import getIPFS from "../../utils/getIPFS";
 
 const Product = ({address, product, buyProduct, deleteProduct}) => {
     const {name, image, description, link, donation, goaldonation, donated, uwallets, appId, owner} =
@@ -16,7 +16,7 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
             <Card className="h-100 bg-dark">
                 
                 <div className="ratio ratio-16x9">
-                    <img src={image} alt={name} style={{objectFit: "cover"}}/>
+                    <img src={getIPFS(image)} alt={name} style={{objectFit: "cover"}}/>
                 </div>
                 
                 <Card.Body className="d-flex flex-column text-light">
