@@ -5,6 +5,7 @@ import { stringToMicroAlgos } from "../../utils/conversions";
 import axios from 'axios';
 import ReactQuill from 'react-quill';
 import '../../styles/quill.snow.css';
+import getIPFS from "../../utils/getIPFS";
 
 const AddProduct = ({ createProduct , className, label}) => {
     const [name, setName] = useState("");
@@ -157,7 +158,7 @@ const AddProduct = ({ createProduct , className, label}) => {
                         </div>
                         {image !== "" &&
                         <div className="mb-3">
-                            <Image src={image} rounded className="w-100" />
+                            <Image src={getIPFS(image)} rounded className="w-100" />
                         </div>}
                         <Form.Label>{`Description ( ${description.length}/112 Chars )`}
                         </Form.Label>
