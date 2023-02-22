@@ -25,6 +25,8 @@ export const indexerClient = new algosdk.Indexer(
   config.indexerPort
 );
 
+export const BASE_URL = "https://sam-shariat.github.io/HMDI/";
+
 export const myAlgoConnect = new MyAlgoConnect();
 
 export const minRound = 26540981;

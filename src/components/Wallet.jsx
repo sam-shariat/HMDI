@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import { NotificationError, NotificationSuccess } from "../components/utils/Notifications";
 import { createProductAction } from "../utils/marketplace";
 import AddProduct from "./marketplace/AddProduct";
+import getIPFS from "../utils/getIPFS";
+import { BASE_URL } from "../utils/constants";
 
 const Wallet = ({ address, name, amount, symbol, disconnect }) => {
     const [profile, setProfile] = useState(null);
@@ -108,14 +110,14 @@ const Wallet = ({ address, name, amount, symbol, disconnect }) => {
                         <Spinner animation="border" size="sm" className="opacity-25" />
                     )}
                     {profile ?
-                        <Image className="mx-2" width={28} height={28} src={profile.image} roundedCircle />
+                        <Image className="mx-2" width={28} height={28} src={getIPFS(profile.image)} roundedCircle />
                         :
                         <Identicon address={address} size={28} className="ms-2 me-1" />
                     }
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="shadow-lg border-0">
-                    <Dropdown.Item href={`http://localhost:3000?address=${address}`}
+                    <Dropdown.Item href={`${BASE_URL}?address=${address}`}
                         target="_blank">
                         <Stack direction="horizontal" gap={2}>
                             <i className="bi bi-person-circle fs-4" />
