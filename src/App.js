@@ -9,6 +9,7 @@ import { indexerClient, myAlgoConnect } from "./utils/constants";
 import coverImg from "./assets/img/balloon.svg";
 import SingleProduct from "./pages/SingleProduct";
 import { ReactSVG } from "react-svg";
+import Copyright from "./components/Copyright";
 
 const App = function AppWrapper() {
   const [address, setAddress] = useState(
@@ -131,6 +132,9 @@ const App = function AppWrapper() {
           connect={connectWallet}
         />
       )}
+      <footer>
+            <Copyright />
+          </footer>
     </>
   );
 };

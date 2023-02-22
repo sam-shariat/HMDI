@@ -96,7 +96,7 @@ const SingleProduct = ({ address, fetchBalance }) => {
               data-bs-placement="top"
               title={`${comments} | Comment`}
             >
-              <i className="bi bi-chat-square-text"></i>{" "+comments}
+              {comments}<i className="bi bi-chat-square-text px-2"></i>
             </Button>
           </div>
         </div>

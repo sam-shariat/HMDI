@@ -26,6 +26,8 @@ export const indexerClient = new algosdk.Indexer(
 );
 
 export const BASE_URL = "https://sam-shariat.github.io/HMDI/";
+export const GITHUB_URL = "https://github.com/sam-shariat/HMDI";
+export const TWITTER_URL = "https://twitter.com/SamyWalters";
 
 export const myAlgoConnect = new MyAlgoConnect();
 

@@ -43,7 +43,6 @@ const Cover = ({ name, title, sub, coverImg, connect }) => {
                 </Button>
                 </Col>
             </Row>
-            <Copyright />
         </main>
         </Container>
     );

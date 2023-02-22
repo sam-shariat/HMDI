@@ -17,7 +17,7 @@ const InteractiveLogo = ()=> {
     return (
     <div id="particle-slider" style={{
         zIndex:99,
-        height:isMobile ? '300px' : '100%',
+        height:isMobile ? '300px' : '90%',
         width:isMobile ? '100%' : '50%',
         margin: '0 0 30px 0',
         padding: 0,
