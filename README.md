@@ -5,12 +5,17 @@
 <p align="justify">A Decentralized Platform to Raise Funds ( in ALGOs ) For Your Most Important Project and Donate Some ALGO(s) To Help Your Fellows In Need</p>
 </div>
 <br/>
+<div>
 <h3 align="left"><a href="https://sam-shariat.github.io/HMDI/" target="_blank">Live Demo</a></h3>
 <p> homepage screenshot </p>
 <img src="screens/hmdi-home-page.jpg" width="100%" alt="Chainlink Hardhat logo">
 <p> project/cause page screenshot </p>
 <img src="screens/hmdi-cause-page.jpg" width="100%" alt="Chainlink Hardhat logo">
 <br/>
+</div>
+
+## :briefcase: Used Libraries
+
 - This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
 - Algorand Official SDK : [algosdk](https://www.npmjs.com/package/algosdk)
 - My Algo Wallet SDK : [myalgo-connect](https://www.npmjs.com/package/@randlabs/myalgo-connect)
